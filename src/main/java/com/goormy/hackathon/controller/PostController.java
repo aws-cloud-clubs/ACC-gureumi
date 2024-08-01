@@ -1,7 +1,8 @@
 package com.goormy.hackathon.controller;
 
 import com.goormy.hackathon.dto.post.PostCreateRequestDto;
-import com.goormy.hackathon.dto.post.PostRedisResponseDto;
+import com.goormy.hackathon.dto.post.PostResponseDto;
+import com.goormy.hackathon.redis.entity.PostRedis;
 import com.goormy.hackathon.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ public class PostController {
   private final PostService postService;
 
   @PostMapping
-  public ResponseEntity<PostRedisResponseDto> createPost(
+  public ResponseEntity<PostResponseDto> createPost(
       @RequestHeader("userId") Long userId,
       @RequestBody PostCreateRequestDto request) {
     return ResponseEntity.ok(postService.createPost(userId, request));
@@ -29,7 +30,7 @@ public class PostController {
   }
 
   @GetMapping("/{post_id}")
-  public ResponseEntity<PostRedisResponseDto> getPost(
+  public ResponseEntity<PostResponseDto> getPost(
       @PathVariable("post_id") Long postId) {
     return ResponseEntity.ok(postService.getPost(postId));
   }

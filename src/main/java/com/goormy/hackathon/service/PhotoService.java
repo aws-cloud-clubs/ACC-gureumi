@@ -5,7 +5,9 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.Headers;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
+
 import java.util.Date;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,9 +25,9 @@ public class PhotoService {
   url 생성 함수
    */
   public String getPreSignedUrl(Long prefix, String imageName, HttpMethod httpMethod) {
-    String photoPath = String.format("%d%s", prefix, imageName);
+    imageName = createPath(prefix.toString(), imageName);
     GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePresignedUrlRequest(bucket,
-        photoPath, httpMethod);
+        imageName, httpMethod);
     return amazonS3.generatePresignedUrl(generatePresignedUrlRequest).toString();
   }
 
@@ -35,10 +37,19 @@ public class PhotoService {
         new GeneratePresignedUrlRequest(bucket, fileName)
             .withMethod(httpMethod)
             .withExpiration(getPresignedUrlExpiration());
-    generatePresignedUrlRequest.addRequestParameter(
-        Headers.S3_CANNED_ACL,
-        CannedAccessControlList.PublicRead.toString());
+//    generatePresignedUrlRequest.addRequestParameter(
+//        Headers.S3_CANNED_ACL,
+//        CannedAccessControlList.PublicRead.toString());
     return generatePresignedUrlRequest;
+  }
+
+  private String createFileId() {
+    return UUID.randomUUID().toString();
+  }
+
+  private String createPath(String prefix, String fileName) {
+    String fileId = createFileId();
+    return String.format("%s/%s", prefix, fileId + fileName);
   }
 
   /*

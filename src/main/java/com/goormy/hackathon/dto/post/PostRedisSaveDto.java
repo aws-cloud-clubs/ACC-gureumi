@@ -22,7 +22,7 @@ public class PostRedisSaveDto implements Serializable {
   private int likeCount;
   private UserResponseDto user;
   private String imageName;
-  private List<HashtagResponseDto> hashtags = new ArrayList<>();
+  private List<HashtagResponseDto> postHashtags = new ArrayList<>();
 
   public static PostRedisSaveDto toDto(Post post, List<PostHashtag> hashtags) {
     return PostRedisSaveDto.builder()
@@ -35,7 +35,7 @@ public class PostRedisSaveDto implements Serializable {
             .name(post.getUser().getName())
             .build())
         .imageName(post.getImageName())
-        .hashtags(hashtags.stream().map(HashtagResponseDto::toDto).toList())
+        .postHashtags(hashtags.stream().map(HashtagResponseDto::toDto).toList())
         .build();
   }
 

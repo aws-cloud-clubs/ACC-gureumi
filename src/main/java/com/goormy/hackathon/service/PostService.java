@@ -2,12 +2,15 @@ package com.goormy.hackathon.service;
 
 import com.amazonaws.HttpMethod;
 import com.goormy.hackathon.dto.post.PostCreateRequestDto;
-import com.goormy.hackathon.dto.post.PostRedisResponseDto;
+import com.goormy.hackathon.dto.post.PostResponseDto;
 import com.goormy.hackathon.dto.post.PostRedisSaveDto;
 import com.goormy.hackathon.entity.Post;
 import com.goormy.hackathon.entity.User;
+import com.goormy.hackathon.redis.entity.PostRedis;
+import com.goormy.hackathon.repository.PostRedisRepository;
 import com.goormy.hackathon.repository.PostRepository;
 import com.goormy.hackathon.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -23,34 +26,38 @@ public class PostService {
   private final PostRepository postRepository;
   private final RedisTemplate<String, Object> postRedisTemplate;
   private final UserRepository userRepository;
+  private final PostRedisRepository postRedisRepository;
   private final PhotoService photoService;
+
+  private final HashtagService hashtagService;
 
   // 포스트 생성
   @Transactional
-  public PostRedisResponseDto createPost(Long userId, PostCreateRequestDto request) {
+  public PostResponseDto createPost(Long userId, PostCreateRequestDto request) {
 
     User user = userRepository.findById(userId).
         orElseThrow(() -> new IllegalArgumentException("해당 회원을 찾을 수 없습니다. "));
 
+    // rds에 저장
+
     Post post = request.toEntity(user);
 
-    // rds에 저장
     postRepository.save(post);
 
-    // redis 반환 Dto
+    var postHashtags = hashtagService.getOrCreateHashtags(request.getHashtags());
+    post.setPostHashtags(postHashtags);
+
+    // redis 저장 Dto(photoUrl 포함)
+
+    PostRedis redis = request.toRedisEntity(post);
+    postRedisRepository.save(redis);
+//    postRedisTemplate.opsForValue().set(post.getId() + "", saveRedisDto);
+
+    // redis 반환 Dto(photoName 포함)
     String imageUrl = photoService.getPreSignedUrl(post.getId(), request.getImageName(),
-        HttpMethod.POST);
-    PostRedisResponseDto redisDto = PostRedisResponseDto.toDto(post, post.getPostHashtags(),
-        imageUrl);
+        HttpMethod.PUT);
 
-    // redis 저장 Dto
-    PostRedisSaveDto saveRedisDto = PostRedisSaveDto.toDto(post, post.getPostHashtags());
-
-    postRedisTemplate.opsForValue().set(post.getId() + "", saveRedisDto);
-
-    System.out.println(redisDto);
-//    return (PostRedisResponseDto) postRedisTemplate.opsForValue().get(redisDto.getPostId());
-    return redisDto;
+    return PostResponseDto.toDto(post, imageUrl);
   }
 
 
@@ -65,29 +72,39 @@ public class PostService {
 
   // 포스트 단일 조회
   @Transactional(readOnly = true)
-  public PostRedisResponseDto getPost(Long postId) {
+  public PostResponseDto getPost(Long postId) {
     System.out.println(postRedisTemplate.opsForValue()
         .get(postId + ""));
 
-    PostRedisResponseDto response = (PostRedisResponseDto) postRedisTemplate.opsForValue()
+    Object redisData = postRedisTemplate.opsForValue()
         .get(postId + "");
 
     String imageUrl;
-    if (response == null) {
-      Post post = postRepository.findById(postId)
-          .orElseThrow(() -> new IllegalArgumentException("해당 포스트를 조회할 수 없습니다. "));
-      imageUrl = photoService.getPreSignedUrl(postId, post.getImageName(), HttpMethod.GET);
-
-      postRedisTemplate.opsForValue().set(
-          post.getId().toString(),
-          PostRedisSaveDto.toDto(post, post.getPostHashtags()),
-          Duration.ofHours(24));
-
-      return PostRedisResponseDto.toDto(post, post.getPostHashtags(), imageUrl);
+    if (redisData == null) {
+      return getPostInRDB(postId);
     }
 
-    imageUrl = photoService.getPreSignedUrl(postId, response.getImageUrl(), HttpMethod.GET);
-    response.updatePhoto(imageUrl);
-    return response;
+    return getPostInRedis(postId, (PostRedis) redisData);
   }
+
+  // rdb에서 조회
+  private PostResponseDto getPostInRDB(Long postId) {
+    Post post = postRepository.findById(postId)
+        .orElseThrow(() -> new IllegalArgumentException("해당 포스트를 조회할 수 없습니다. "));
+    String imageUrl = photoService.getPreSignedUrl(postId, post.getImageName(), HttpMethod.GET);
+
+    postRedisTemplate.opsForValue().set(
+        post.getId().toString(),
+        PostRedisSaveDto.toDto(post, post.getPostHashtags()),
+        Duration.ofHours(24));
+
+    return PostResponseDto.toDto(post, imageUrl);
+  }
+
+
+  private PostResponseDto getPostInRedis(Long postId, PostRedis data) {
+    String imageUrl = photoService.getPreSignedUrl(postId, data.getImageName(), HttpMethod.GET);
+    return PostResponseDto.toDto(data, imageUrl);
+  }
+
 }

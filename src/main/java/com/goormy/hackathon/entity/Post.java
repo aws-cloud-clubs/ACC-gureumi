@@ -37,6 +37,12 @@ public class Post extends BaseTimeEntity {
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
   private List<Like> likes = new ArrayList<>();
 
+  public void setPostHashtags(List<Hashtag> hashtags) {
+    this.postHashtags = hashtags.stream()
+        .map(hashtag -> new PostHashtag(this, hashtag))
+        .toList();
+  }
+
 
   @Builder
   public Post(User user, String content, String imageUrl, Integer star, Integer likeCount) {
