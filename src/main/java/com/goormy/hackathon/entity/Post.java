@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.redis.core.RedisHash;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,34 +14,36 @@ import java.util.List;
 @Getter
 public class Post extends BaseTimeEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_id")
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "post_id")
+  private Long id;
 
-    private String content;
+  private String content;
 
-    private String imageUrl;
+  private String imageName;
 
-    private Integer star;
+  private Integer star;
 
-    private Integer likeCount;
+  private Integer likeCount;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id")
+  private User user;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private List<PostHashtag> postHashtags = new ArrayList<>();
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+  private List<PostHashtag> postHashtags = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private List<Like> likes = new ArrayList<>();
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+  private List<Like> likes = new ArrayList<>();
 
-    @Builder
-    public Post(User user, String content, String imageUrl, Integer star, Integer likeCount) {
-        this.user = user;
-        this.content = content;
-        this.imageUrl = imageUrl;
-        this.star = star;
-        this.likeCount = likeCount;
-    }
+
+  @Builder
+  public Post(User user, String content, String imageUrl, Integer star, Integer likeCount) {
+    this.user = user;
+    this.content = content;
+    this.imageName = imageUrl;
+    this.star = star;
+    this.likeCount = likeCount;
+  }
 }

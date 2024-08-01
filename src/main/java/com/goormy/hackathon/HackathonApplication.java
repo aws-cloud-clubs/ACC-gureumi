@@ -7,7 +7,6 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 
 @SpringBootApplication
 @EnableRedisRepositories
-@EnableJpaAuditing
 public class HackathonApplication {
 
 	public static void main(String[] args) {
