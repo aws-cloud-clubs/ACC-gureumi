@@ -32,8 +32,7 @@ public class Hashtag {
     public enum Type {
         LOCATION,
         FOOD,
-        RESTAURANT
-        ;
+        RESTAURANT;
     }
 
     @Builder
