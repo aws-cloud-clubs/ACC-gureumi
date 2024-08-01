@@ -9,17 +9,17 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class FollowCountRedisRepository {
 
-  private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
-  public void save(FollowCountCache followCountCache) {
-    redisTemplate.opsForHash().put(followCountCache.getKey(), followCountCache.getField(),
-        followCountCache.getFollowCount());
-  }
+    public void save(FollowCountCache followCountCache) {
+        redisTemplate.opsForHash().put(followCountCache.getKey(), followCountCache.getField(),
+                followCountCache.getFollowCount());
+    }
 
-  public Integer findFollowCount(Long hashtagId) {
-    String key = "FollowCount:" + hashtagId;
-    String field = String.valueOf(hashtagId);
-    return (Integer) redisTemplate.opsForHash().get(key, field);
-  }
+    public Integer findFollowCount(Long hashtagId) {
+        String key = "FollowCount:" + hashtagId;
+        String field = String.valueOf(hashtagId);
+        return (Integer) redisTemplate.opsForHash().get(key, field);
+    }
 
 }

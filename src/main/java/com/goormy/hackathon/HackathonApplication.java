@@ -9,8 +9,8 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 @EnableRedisRepositories
 public class HackathonApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(HackathonApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(HackathonApplication.class, args);
+    }
 
 }

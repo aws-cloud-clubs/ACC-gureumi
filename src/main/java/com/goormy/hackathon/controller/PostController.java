@@ -13,25 +13,25 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/posts")
 public class PostController {
 
-  private final PostService postService;
+    private final PostService postService;
 
-  @PostMapping
-  public ResponseEntity<PostResponseDto> createPost(
-      @RequestHeader("userId") Long userId,
-      @RequestBody PostCreateRequestDto request) {
-    return ResponseEntity.ok(postService.createPost(userId, request));
-  }
+    @PostMapping
+    public ResponseEntity<PostResponseDto> createPost(
+            @RequestHeader("userId") Long userId,
+            @RequestBody PostCreateRequestDto request) {
+        return ResponseEntity.ok(postService.createPost(userId, request));
+    }
 
-  @DeleteMapping("/{post_id}")
-  public ResponseEntity<Void> deletePost(
-      @PathVariable("post_id") Long postId) {
-    postService.deletePost(postId);
-    return ResponseEntity.noContent().build();
-  }
+    @DeleteMapping("/{post_id}")
+    public ResponseEntity<Void> deletePost(
+            @PathVariable("post_id") Long postId) {
+        postService.deletePost(postId);
+        return ResponseEntity.noContent().build();
+    }
 
-  @GetMapping("/{post_id}")
-  public ResponseEntity<PostResponseDto> getPost(
-      @PathVariable("post_id") Long postId) {
-    return ResponseEntity.ok(postService.getPost(postId));
-  }
+    @GetMapping("/{post_id}")
+    public ResponseEntity<PostResponseDto> getPost(
+            @PathVariable("post_id") Long postId) {
+        return ResponseEntity.ok(postService.getPost(postId));
+    }
 }
