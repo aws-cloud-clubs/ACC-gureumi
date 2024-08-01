@@ -18,5 +18,4 @@ public class PostRedisRepository {
     public void findById() {
 
     }
-
 }
