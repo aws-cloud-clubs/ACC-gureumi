@@ -1,5 +1,6 @@
 package com.goormy.hackathon.service;
 
+import com.amazonaws.HttpMethod;
 import com.goormy.hackathon.dto.post.PostRequestDto_SY;
 import com.goormy.hackathon.dto.post.PostResponseDto_SY;
 import com.goormy.hackathon.entity.Post;
@@ -18,11 +19,15 @@ public class PostService_SY {
     private final HashtagService_SY hashtagServiceSY;
     private final PostCacheService_SY postCacheServiceSY;
 
+    private final PhotoService_SJ photoServiceSJ;
+
     @Transactional
     public PostResponseDto_SY createPost(Long userId, PostRequestDto_SY postRequestDtoSY) {
         // 사용자 찾기
         var user = userRepositorySY.findById(userId).orElseThrow(
                 () -> new IllegalArgumentException("User not found"));  // TODO: Custom exception
+
+
 
         // post 생성
         var post = Post.builder()
@@ -43,7 +48,9 @@ public class PostService_SY {
         // redis 저장
         postCacheServiceSY.cache(post);
 
-        return new PostResponseDto_SY(post);
+        String imgUrl = photoServiceSJ.getPreSignedUrl(post.getId(), post.getImageUrl(), HttpMethod.PUT);
+
+        return new PostResponseDto_SY(post, imgUrl);
     }
 
 }
