@@ -13,31 +13,31 @@ import java.util.List;
 @Getter
 public class Hashtag {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "hashtag_id")
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "hashtag_id")
+    private Long id;
 
-  private String name;
+    private String name;
 
-  @Enumerated(EnumType.STRING)
-  private Type type;
+    @Enumerated(EnumType.STRING)
+    private Type type;
 
-  @OneToMany(mappedBy = "hashtag", cascade = CascadeType.ALL)
-  private List<Follow> follows = new ArrayList<>();
+    @OneToMany(mappedBy = "hashtag", cascade = CascadeType.ALL)
+    private List<Follow> follows = new ArrayList<>();
 
-  @OneToMany(mappedBy = "hashtag", cascade = CascadeType.ALL)
-  private List<PostHashtag> postHashtags = new ArrayList<>();
+    @OneToMany(mappedBy = "hashtag", cascade = CascadeType.ALL)
+    private List<PostHashtag> postHashtags = new ArrayList<>();
 
-  public enum Type {
-    LOCATION,
-    FOOD,
-    RESTAURANT;
-  }
+    public enum Type {
+        LOCATION,
+        FOOD,
+        RESTAURANT;
+    }
 
-  @Builder
-  public Hashtag(String name, Type type) {
-    this.name = name;
-    this.type = type;
-  }
+    @Builder
+    public Hashtag(String name, Type type) {
+        this.name = name;
+        this.type = type;
+    }
 }

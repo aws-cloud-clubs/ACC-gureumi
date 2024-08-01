@@ -10,16 +10,16 @@ import java.util.List;
 @Builder
 public class PostDetailResponseDto {
 
-  private Long id;
-  private UserResponseDto user;
-  private String content;
-  private long likeCount;
-  private String imageUrl;
-  private int str;
+    private Long id;
+    private UserResponseDto user;
+    private String content;
+    private long likeCount;
+    private String imageUrl;
+    private int str;
 
-  private List<HashtagResponseDto> hashtags = new ArrayList<>();
+    private List<HashtagResponseDto> hashtags = new ArrayList<>();
 
-  // created_at 추가
+    // created_at 추가
 
-  private boolean isLike;
+    private boolean isLike;
 }

@@ -9,10 +9,14 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class PostRedisRepository {
 
-  private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
-  public void save(PostRedis postRedis) {
-    redisTemplate.opsForList().leftPush(postRedis.getPostId().toString(), postRedis);
-  }
+    public void save(PostRedis postRedis) {
+        redisTemplate.opsForList().leftPush(postRedis.getPostId().toString(), postRedis);
+    }
+
+    public void findById() {
+
+    }
 
 }

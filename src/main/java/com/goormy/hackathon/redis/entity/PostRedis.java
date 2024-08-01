@@ -20,14 +20,14 @@ import java.util.List;
 @Data
 public class PostRedis implements Serializable {
 
-  @Id
-  private String postId;
-  private String content;
-  private Integer star;
-  private int likeCount;
-  private UserResponseDto user;
-  private String imageName;
+    @Id
+    private String postId;
+    private String content;
+    private Integer star;
+    private int likeCount;
+    private UserResponseDto user;
+    private String imageName;
 
-  private List<HashtagResponseDto> postHashtags = new ArrayList<>();
-  private String createdAt;
+    private List<HashtagResponseDto> postHashtags = new ArrayList<>();
+    private String createdAt;
 }

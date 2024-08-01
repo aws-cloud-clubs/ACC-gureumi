@@ -9,15 +9,15 @@ import lombok.Getter;
 @Getter
 public class HashtagResponseDto {
 
-  private Long id;
-  private String name;
-  private Hashtag.Type type;
+    private Long id;
+    private String name;
+    private Hashtag.Type type;
 
-  public static HashtagResponseDto toDto(PostHashtag hashtag) {
-    return HashtagResponseDto.builder()
-        .id(hashtag.getId())
-        .name(hashtag.getHashtag().getName())
-        .type(hashtag.getHashtag().getType())
-        .build();
-  }
+    public static HashtagResponseDto toDto(PostHashtag hashtag) {
+        return HashtagResponseDto.builder()
+                .id(hashtag.getId())
+                .name(hashtag.getHashtag().getName())
+                .type(hashtag.getHashtag().getType())
+                .build();
+    }
 }
