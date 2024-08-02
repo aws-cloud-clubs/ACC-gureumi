@@ -21,9 +21,7 @@ public class PhotoService_SJ {
     @Value("${cloud.aws.cloudfront.distribution-domain}")
     private String domain;
 
-    /*
-    url 생성 함수
-     */
+    // PreSigne_ure 생성함수
     public String getPreSignedUrl(Long prefix, String imageName, HttpMethod httpMethod) {
         imageName = createPath(prefix.toString(), imageName);
         GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePresignedUrlRequest(bucket,
@@ -44,6 +42,7 @@ public class PhotoService_SJ {
         return String.format("%s/%s", prefix, fileName);
     }
 
+    // CDN Url 생성함수
     public String getCDNUrl(Long postId, String imageUrl) {
         return "http://" + domain + "/" + postId.toString() + "/" + imageUrl;
     }
