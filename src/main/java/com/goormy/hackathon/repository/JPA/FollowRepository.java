@@ -19,4 +19,7 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
 
     @Query("SELECT f.hashtag FROM Follow f WHERE f.user = :user")
     List<Hashtag> findHashtagsByUser(@Param("user") User user);
+
+    @Query("SELECT f FROM Follow f join fetch f.hashtag h where h.id = :hashtagId")
+    List<Follow> findUserIdListByHashtagId(@Param("hashtagId") Long id);
 }

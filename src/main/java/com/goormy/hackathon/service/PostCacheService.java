@@ -1,11 +1,15 @@
 package com.goormy.hackathon.service;
 
+import com.goormy.hackathon.entity.Follow;
 import com.goormy.hackathon.entity.Hashtag;
 import com.goormy.hackathon.entity.Post;
 import com.goormy.hackathon.redis.entity.PostCache_SY;
+import com.goormy.hackathon.repository.JPA.FollowRepository;
 import com.goormy.hackathon.repository.Redis.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +20,7 @@ public class PostCacheService {
     private final FollowListRedisRepository followListRedisRepository;
     private final FeedUserRedisRepository feedUserRedisRepository;
     private final FeedHashtagRedisRepository feedHashtagRedisRepository;
+    private final FollowRepository followRepository;
 
     // TODO: 이벤트로 발행한 후 이벤트를 받아 Redis에 비동기로 저장
     public void cache(Post post) {
@@ -38,9 +43,10 @@ public class PostCacheService {
     }
 
     private void pushModel(Hashtag hashtag, Post post) {
-        var userIdList = followListRedisRepository.findUserIdListByHashtagId(hashtag.getId());
-        userIdList.forEach(userId -> {
-            feedUserRedisRepository.set(Long.valueOf(userId), post);
+        List<Follow> followList = followRepository.findUserIdListByHashtagId(hashtag.getId());
+
+        followList.forEach(follow -> {
+            feedUserRedisRepository.set(Long.valueOf(follow.getUser().getId()), post);
         });
     }
 

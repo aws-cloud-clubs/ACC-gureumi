@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class FollowCountRedisRepository {
 
     private final RedisTemplate<String, Integer> integerRedisTemplate;
-    private static final String FOLLOWING_COUNT_KEY = "follow_count:";
+    private static final String FOLLOWING_COUNT_KEY = "followcount:";
     private final RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
@@ -41,12 +41,12 @@ public class FollowCountRedisRepository {
     }
 
     public void set(FollowCountCache followCountCacheSY) {
-        redisTemplate.opsForHash().put(followCountCacheSY.getKey(), followCountCacheSY.getField(), followCountCacheSY.getFollowCount());
+        redisTemplate.opsForValue().set(followCountCacheSY.getHashtagId().toString(), followCountCacheSY.getFollowCount());
     }
 
     public Integer findFollowCountByHashtagId(Long hashtagId) {
         String key = "followcount:" + hashtagId;
         String field = String.valueOf(hashtagId);
-        return (Integer) redisTemplate.opsForHash().get(key, field);
+        return (Integer) redisTemplate.opsForValue().get(key);
     }
 }
